@@ -85,15 +85,11 @@ workflows:
     name: Unity Android Workflow
     max_build_duration: 120
     environment:
-      android_signing:
-        - keystore_reference
       groups:
         - unity_credentials
-        - google_play
       vars:
         BUILD_SCRIPT: BuildAndroid
         PACKAGE_NAME: "io.codemagic.unitysample"
-        GOOGLE_PLAY_TRACK: alpha
     scripts:
       - name: Activate Unity License
         script: |
@@ -101,11 +97,6 @@ workflows:
             -serial ${UNITY_SERIAL?} \
             -username ${UNITY_EMAIL?} \
             -password ${UNITY_PASSWORD?}
-      - name: Set build number
-        script: |
-          export NEW_BUILD_NUMBER=$(($(google-play get-latest-build-number \
-            --package-name "$PACKAGE_NAME" \
-            --tracks="$GOOGLE_PLAY_TRACK") + 1))
       - name: Build the project
         script: |
           $UNITY_HOME/Contents/MacOS/Unity -batchmode \
@@ -131,10 +122,6 @@ workflows:
         notify:
           success: true
           failure: false
-      google_play:
-        credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-        track: GOOGLE_PLAY_TRACK
-        submit_as_draft: true
 
 
   unity-windows-workflow:
