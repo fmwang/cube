@@ -299,6 +299,7 @@ workflows:
         recipients:
           - user_1@example.com
           - user_2@example.com
+          - user_3@example.com
         notify:
           success: true
           failure: false
